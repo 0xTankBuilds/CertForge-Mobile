@@ -4,15 +4,33 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- Blue background — fills any mask shape -->
     <path
         android:fillColor="#1565C0"
-        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+        android:pathData="M0,0h108v108h-108z" />
+
+    <!-- Document -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M44,38h20v4h-20zM44,46h20v4h-20zM44,54h14v4h-14zM44,62h20v4h-20z"
-        android:strokeWidth="0" />
+        android:pathData="M30,24h32l16,16v48c0,3 -2,5 -5,5h-43c-3,0 -5,-2 -5,-5v-59c0,-3 2,-5 5,-5z" />
+
+    <!-- Fold corner -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M62,24v16h16z" />
+
+    <!-- Text lines on document -->
+    <path
+        android:fillColor="#BBDEFB"
+        android:pathData="M36,50h28v3h-28zM36,58h28v3h-28zM36,66h18v3h-18z" />
+
+    <!-- Green checkmark circle -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M72,54m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0" />
+
+    <!-- Checkmark -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M38,34h4v28h-4z"
-        android:strokeWidth="0" />
+        android:pathData="M68,54.5l4,4l9,-9l-2.5,-2.5l-6.5,6.5l-1.5,-1.5z" />
 </vector>
