@@ -1,0 +1,24 @@
+*.iml
+.gradle
+.idea
+build
+captures
+local.properties
+
+# Android SDK
+/android
+*.hprof
+
+# NDK
+.cxx
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+.vscode
+*.log
