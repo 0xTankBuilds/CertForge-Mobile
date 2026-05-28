@@ -1,6 +1,6 @@
 # AZ-104 Study App
 
-Native Android app for offline AZ-104 Azure Administrator exam study. Syncs progress bidirectionally with a [web companion app](https://github.com/your-username/az-104-study) over the home WiFi network.
+Native Android app for offline AZ-104 Azure Administrator exam study. Syncs progress bidirectionally with a [web companion app](http://gitlab-docker.localdomain/khanh/azure-study-guide) over the home WiFi network.
 
 ## Features
 
@@ -55,7 +55,7 @@ Web App (Next.js → SQLite/SQL.js)
 - JDK 17+
 - Android SDK 35
 - An emulator or physical device running API 26+
-- The [web companion app](https://github.com/your-username/az-104-study) running and accessible on the same network
+- The [web companion app](http://gitlab-docker.localdomain/khanh/azure-study-guide) running and accessible on the same network
 
 ## Building
 
