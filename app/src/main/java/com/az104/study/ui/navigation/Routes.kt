@@ -42,7 +42,7 @@ sealed class Route(val route: String) {
 }
 
 enum class BottomNavItem(val route: String, val label: String) {
-    DASHBOARD("dashboard", "Dashboard"),
+    DASHBOARD("dashboard", "Home"),
     STUDY("domains", "Study"),
     QUIZ("quiz/select", "Quiz"),
     ANALYTICS("analytics", "Analytics"),
