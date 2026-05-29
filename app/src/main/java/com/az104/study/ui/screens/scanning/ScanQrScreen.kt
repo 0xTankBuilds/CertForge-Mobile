@@ -81,6 +81,8 @@ fun ScanQrScreen(
                     }
             } catch (e: Exception) {
                 viewModel.setError("Could not read image: ${e.message}")
+            } catch (e: OutOfMemoryError) {
+                viewModel.setError("Image too large to process")
             }
         }
     }
@@ -181,9 +183,19 @@ private fun CameraScannerContent(
                                                 }
                                             }
                                         }
-                                        .addOnCompleteListener { imageProxy.close() }
+                                        .addOnCompleteListener {
+                                            try {
+                                                imageProxy.close()
+                                            } catch (_: Exception) {
+                                                // Camera may already be released
+                                            }
+                                        }
                                 } else {
-                                    imageProxy.close()
+                                    try {
+                                        imageProxy.close()
+                                    } catch (_: Exception) {
+                                        // Camera may already be released
+                                    }
                                 }
                             }
                         }

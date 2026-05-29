@@ -35,7 +35,16 @@ class ScanQrViewModel @Inject constructor(
 
         _state.value = _state.value.copy(processing = true, error = null)
 
-        val result = pairingRepository.parseQrContent(rawValue)
+        val result = try {
+            pairingRepository.parseQrContent(rawValue)
+        } catch (e: Exception) {
+            _state.value = _state.value.copy(
+                processing = false,
+                error = "Failed to parse QR code: ${e.message}"
+            )
+            return
+        }
+
         if (result.isFailure) {
             _state.value = _state.value.copy(
                 processing = false,
