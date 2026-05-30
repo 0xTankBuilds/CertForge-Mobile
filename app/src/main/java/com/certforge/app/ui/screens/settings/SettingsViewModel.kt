@@ -2,8 +2,11 @@ package com.certforge.app.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.certforge.app.data.local.dao.CertificationDao
 import com.certforge.app.data.local.dao.QuestionDao
 import com.certforge.app.data.local.dao.StudyGuideDao
+import com.certforge.app.data.local.entity.CertificationEntity
+import com.certforge.app.data.repository.SyncRepository
 import com.certforge.app.domain.sync.SyncManager
 import com.certforge.app.domain.sync.SyncStatus
 import com.certforge.app.util.DarkModePreference
@@ -26,6 +29,9 @@ data class SettingsState(
     val serverUrl: String = "",
     val profileName: String = "",
     val certificationName: String = "",
+    val selectedCertId: String = "",
+    val certifications: List<CertificationEntity> = emptyList(),
+    val isSwitchingCert: Boolean = false,
     val homeWifiSsid: String = "",
     val darkMode: DarkModePreference = DarkModePreference.SYSTEM,
     val syncStatus: SyncStatus = SyncStatus.IDLE,
@@ -42,6 +48,8 @@ class SettingsViewModel @Inject constructor(
     private val serverUrlManager: ServerUrlManager,
     private val userPreferencesManager: UserPreferencesManager,
     private val syncManager: SyncManager,
+    private val syncRepository: SyncRepository,
+    private val certificationDao: CertificationDao,
     private val studyGuideDao: StudyGuideDao,
     private val questionDao: QuestionDao
 ) : ViewModel() {
@@ -49,7 +57,10 @@ class SettingsViewModel @Inject constructor(
     private val _state = MutableStateFlow(SettingsState())
     val state: StateFlow<SettingsState> = _state.asStateFlow()
 
-    init { load() }
+    init {
+        load()
+        observeCertifications()
+    }
 
     private fun load() {
         viewModelScope.launch {
@@ -68,6 +79,7 @@ class SettingsViewModel @Inject constructor(
                 serverUrl = serverUrl,
                 profileName = profileName,
                 certificationName = certId.uppercase(),
+                selectedCertId = certId,
                 homeWifiSsid = wifiSsid,
                 darkMode = darkMode,
                 syncStatus = syncManager.syncState.value.status,
@@ -78,6 +90,45 @@ class SettingsViewModel @Inject constructor(
                 studyGuideCount = studyGuideCount,
                 questionCount = questionCount
             )
+        }
+    }
+
+    private fun observeCertifications() {
+        viewModelScope.launch {
+            certificationDao.observeAll().collect { certs ->
+                _state.value = _state.value.copy(certifications = certs)
+                // Fetch from server if paired but nothing cached yet
+                if (certs.isEmpty() && tokenManager.isPaired()) {
+                    try {
+                        syncRepository.fetchCertifications()
+                    } catch (_: Exception) {
+                        // Non-fatal — will show on next sync or manual trigger
+                    }
+                }
+            }
+        }
+    }
+
+    fun selectCertification(certId: String) {
+        if (certId == serverUrlManager.getSelectedCertId()) return
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isSwitchingCert = true)
+            try {
+                syncRepository.switchCertification(certId)
+                _state.value = _state.value.copy(
+                    certificationName = certId.uppercase(),
+                    selectedCertId = certId,
+                    isSwitchingCert = false,
+                    syncStatus = SyncStatus.SUCCESS,
+                    syncMessage = "Switched to $certId"
+                )
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(
+                    isSwitchingCert = false,
+                    syncStatus = SyncStatus.ERROR,
+                    syncMessage = "Failed to switch cert: ${e.message}"
+                )
+            }
         }
     }
 

@@ -13,6 +13,7 @@ Native Android companion app for offline exam study with CertForge (multi-certif
 - **Achievements** — 15 achievements with progress tracking
 - **Bidirectional sync** — Sync progress with the web app over your home network
 - **QR pairing** — Quick device pairing via QR code
+- **Certification selector** — Switch between certifications in Settings (fetches available certs from server)
 
 ## Tech Stack
 
@@ -131,7 +132,7 @@ app/src/main/java/com/certforge/app/
 | Quiz History | Past quiz sessions |
 | Analytics | Performance analytics |
 | Achievements | All achievements with progress tracking |
-| Settings | Sync, offline content summary, theme preferences |
+| Settings | Sync, certification selector dropdown, offline content summary, theme preferences |
 | Scan QR | Camera-based QR pairing |
 
 ## API Endpoints

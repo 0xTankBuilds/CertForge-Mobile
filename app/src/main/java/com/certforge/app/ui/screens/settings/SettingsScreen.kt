@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.certforge.app.data.local.entity.CertificationEntity
 import com.certforge.app.domain.sync.SyncStatus
 import com.certforge.app.util.DarkModePreference
 
@@ -78,11 +79,32 @@ fun SettingsScreen(
                     }
                     if (state.certificationName.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            "Certification: ${state.certificationName}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        if (state.isSwitchingCert) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    "Switching certification...",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        } else if (state.certifications.size > 1) {
+                            CertificationDropdown(
+                                certifications = state.certifications,
+                                selectedCertId = state.selectedCertId,
+                                onSelect = { viewModel.selectCertification(it) }
+                            )
+                        } else {
+                            Text(
+                                "Certification: ${state.certificationName}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     if (state.isPaired) {
@@ -272,6 +294,62 @@ private fun SectionHeader(title: String) {
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CertificationDropdown(
+    certifications: List<CertificationEntity>,
+    selectedCertId: String,
+    onSelect: (String) -> Unit
+) {
+    val selectedCert = certifications.firstOrNull { it.id == selectedCertId }
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selectedCert?.code?.uppercase() ?: selectedCertId.uppercase(),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Certification") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                .fillMaxWidth(),
+            singleLine = true
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            certifications.forEach { cert ->
+                DropdownMenuItem(
+                    text = {
+                        Column {
+                            Text(
+                                cert.code.uppercase(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                cert.name,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    },
+                    onClick = {
+                        onSelect(cert.id)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
+        }
+    }
 }
 
 @Composable

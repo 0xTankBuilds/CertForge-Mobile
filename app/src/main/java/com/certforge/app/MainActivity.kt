@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        if (java.io.File("/data/local/tmp/certforge_seed").exists()) {
+        if (BuildConfig.DEBUG) {
             seedData()
         }
         setContent {
@@ -123,11 +123,10 @@ class MainActivity : ComponentActivity() {
 
     private fun seedData() {
         android.util.Log.d("CertForge", "Seeding test data")
-        tokenManager.saveApiToken("test-api-token-12345")
-        serverUrlManager.saveServerUrl("http://certforge.localdomain:3000")
-        serverUrlManager.saveProfileId("test-profile-456")
-        serverUrlManager.saveProfileName("TestUser")
+        tokenManager.saveApiToken("placeholder-token")
+        serverUrlManager.saveServerUrl("http://YOUR_SERVER_HERE:3000")
+        serverUrlManager.saveProfileId("placeholder-profile")
+        serverUrlManager.saveProfileName("PlaceholderUser")
         serverUrlManager.setLastSyncTimestamp(System.currentTimeMillis())
-        java.io.File("/data/local/tmp/certforge_seed").delete()
     }
 }

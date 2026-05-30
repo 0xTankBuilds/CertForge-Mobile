@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Native Android app (Kotlin + Jetpack Compose) companion for [CertForge](http://github.com/your-org/certforge) — a multi-certification exam study platform. Currently configured for AZ-104 (Azure Administrator). Syncs progress bidirectionally with the web app at `/home/khanh/Code/az-104-study` when on the home WiFi network.
+Native Android app (Kotlin + Jetpack Compose) companion for [CertForge](http://github.com/your-org/certforge) — a multi-certification exam study platform. Currently configured for AZ-104 (Azure Administrator). Syncs progress bidirectionally with the web app at `../certforge-web` when on the home WiFi network.
 
-All 10 implementation phases from the original PRD are fully implemented. See `TASKS.md` for the complete task list.
+All 10 implementation phases from the original PRD are fully implemented.
 
 ## Tech Stack
 
@@ -88,14 +88,14 @@ Sync endpoints use `profileId` query param for device identity; Android app also
 
 ## Sister Project
 
-The web app lives at `/home/khanh/Code/az-104-study` (Next.js 15, TypeScript, SQLite/sql.js, Drizzle ORM, Tailwind CSS + shadcn/ui). It has been renamed from "AZ-104 Study App" to **CertForge** and supports multiple certifications. Seed the web app's database before testing Android sync.
+The web app lives at `../certforge-web` (Next.js 15, TypeScript, SQLite/sql.js, Drizzle ORM, Tailwind CSS + shadcn/ui). It has been renamed from "AZ-104 Study App" to **CertForge** and supports multiple certifications. Seed the web app's database before testing Android sync.
 
 ## HANDOVER Notes (from HANDOVER-APP.md)
 
 The web app rebranding (AZ-104 Study → CertForge) requires the Android app to:
-1. Update base URL from `azure-study.localdomain` to `certforge.localdomain` (user-configured)
+1. Update base URL from `azure-study.localdomain` to `YOUR_SERVER.local` (user-configured)
 2. Pass `?certId=az-104` to all sync/study endpoints *(Done)*
-3. QR payload URL points to `certforge.localdomain` (handled automatically by user's config)
+3. QR payload URL points to `YOUR_SERVER.local` (handled automatically by user's config)
 4. User-Agent header set to `CertForge-Companion/1.0` *(Done)*
 5. DB schema: add `certifications` table + `cert_id` column *(Done)*
 6. Branding: update app name to "CertForge" *(Done)*

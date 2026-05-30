@@ -31,4 +31,7 @@ interface ChapterProgressDao {
 
     @Query("SELECT DISTINCT DATE(completed_at / 1000, 'unixepoch') FROM chapter_progress WHERE completed_at IS NOT NULL")
     suspend fun getCompletionDates(): List<String>
+
+    @Query("DELETE FROM chapter_progress")
+    suspend fun deleteAll()
 }

@@ -31,4 +31,7 @@ interface QuizSessionDao {
 
     @Query("SELECT COUNT(*) FROM quiz_sessions WHERE completed_at IS NOT NULL")
     suspend fun countCompleted(): Int
+
+    @Query("DELETE FROM quiz_sessions")
+    suspend fun deleteAll()
 }

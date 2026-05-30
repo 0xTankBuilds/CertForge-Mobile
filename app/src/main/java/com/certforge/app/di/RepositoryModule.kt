@@ -6,6 +6,7 @@ import com.certforge.app.data.repository.ContentRepository
 import com.certforge.app.data.repository.QuizRepository
 import com.certforge.app.data.repository.SyncRepository
 import com.certforge.app.data.local.dao.ArticleDao
+import com.certforge.app.data.local.dao.CertificationDao
 import com.certforge.app.data.local.dao.ChapterDao
 import com.certforge.app.data.local.dao.ChapterProgressDao
 import com.certforge.app.data.local.dao.DomainDao
@@ -43,6 +44,7 @@ internal object RepositoryModule {
     @Singleton
     fun provideSyncRepository(
         syncApi: SyncApi,
+        certificationDao: CertificationDao,
         domainDao: DomainDao,
         chapterDao: ChapterDao,
         questionDao: QuestionDao,
@@ -56,6 +58,7 @@ internal object RepositoryModule {
     ): SyncRepository {
         return SyncRepository(
             syncApi = syncApi,
+            certificationDao = certificationDao,
             domainDao = domainDao,
             chapterDao = chapterDao,
             questionDao = questionDao,

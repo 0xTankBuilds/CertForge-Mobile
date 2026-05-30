@@ -25,4 +25,7 @@ interface QuestionAttemptDao {
 
     @Query("SELECT COUNT(*) FROM question_attempts WHERE is_correct = 1")
     suspend fun countCorrect(): Int
+
+    @Query("DELETE FROM question_attempts")
+    suspend fun deleteAll()
 }

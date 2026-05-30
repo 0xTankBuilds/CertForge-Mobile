@@ -1,6 +1,7 @@
 package com.certforge.app.data.repository
 
 import com.certforge.app.data.local.dao.ArticleDao
+import com.certforge.app.data.local.dao.CertificationDao
 import com.certforge.app.data.local.dao.ChapterDao
 import com.certforge.app.data.local.dao.ChapterProgressDao
 import com.certforge.app.data.local.dao.DomainDao
@@ -13,6 +14,7 @@ import com.certforge.app.data.local.entity.ArticleEntity
 import com.certforge.app.data.local.entity.ChapterEntity
 import com.certforge.app.data.local.entity.DomainEntity
 import com.certforge.app.data.local.entity.QuestionEntity
+import com.certforge.app.data.local.entity.CertificationEntity
 import com.certforge.app.data.local.entity.SyncMetadataEntity
 import com.certforge.app.data.remote.ProgressUploadRequest
 import com.certforge.app.data.remote.SyncApi
@@ -35,6 +37,7 @@ data class SyncResult(
 
 class SyncRepository @Inject constructor(
     private val syncApi: SyncApi,
+    private val certificationDao: CertificationDao,
     private val domainDao: DomainDao,
     private val chapterDao: ChapterDao,
     private val questionDao: QuestionDao,
@@ -49,6 +52,42 @@ class SyncRepository @Inject constructor(
 
     suspend fun isPaired(): Boolean {
         return serverUrlManager.getServerUrl() != null && serverUrlManager.getProfileId() != null
+    }
+
+    /**
+     * Fetch available certifications from server and cache locally.
+     */
+    suspend fun fetchCertifications(): List<CertificationEntity> {
+        val response = syncApi.getCertifications()
+        val entities = response.certifications.map { dto ->
+            CertificationEntity(
+                id = dto.id,
+                code = dto.code,
+                name = dto.name,
+                description = dto.description
+            )
+        }
+        certificationDao.deleteAll()
+        certificationDao.upsertAll(entities)
+        return entities
+    }
+
+    /**
+     * Switch to a different certification, clearing old content and re-syncing.
+     */
+    suspend fun switchCertification(certId: String) {
+        serverUrlManager.setSelectedCertId(certId)
+
+        // Clear old content data
+        domainDao.deleteAll()
+        chapterDao.deleteAll()
+        questionDao.deleteAll() // questions use upsert, not delete — explicitly clear
+        studyGuideDao.deleteAll()
+        articleDao.deleteAll()
+        syncMetadataDao.deleteAll()
+
+        // Re-sync everything for the new cert
+        performSync(isManual = true)
     }
 
     /**
@@ -105,7 +144,8 @@ class SyncRepository @Inject constructor(
                 description = d.description,
                 weight = d.weight,
                 moduleId = d.moduleId,
-                lastSyncedAt = now
+                lastSyncedAt = now,
+                certId = certId ?: serverUrlManager.getSelectedCertId()
             )
         })
 
