@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.az104.study"
+    namespace = "com.certforge.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.az104.study"
+        applicationId = "com.certforge.app"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

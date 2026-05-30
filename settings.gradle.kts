@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "az-104-study-app"
+rootProject.name = "CertForge"
 include(":app")

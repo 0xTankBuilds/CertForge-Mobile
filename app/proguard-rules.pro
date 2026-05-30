@@ -3,7 +3,7 @@
 -keep class javax.inject.** { *; }
 
 # Keep Room entities
--keep class com.az104.study.data.local.entity.** { *; }
+-keep class com.certforge.app.data.local.entity.** { *; }
 
 # Keep serialization
 -keep class kotlinx.serialization.** { *; }
@@ -12,7 +12,7 @@
 }
 
 # Keep Retrofit interfaces
--keep,allowobfuscation interface com.az104.study.data.remote.SyncApi
+-keep,allowobfuscation interface com.certforge.app.data.remote.SyncApi
 
 # OkHttp
 -dontwarn okhttp3.**

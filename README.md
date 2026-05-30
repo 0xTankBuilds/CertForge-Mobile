@@ -1,10 +1,10 @@
-# AZ-104 Study App
+# CertForge
 
-Native Android app for offline AZ-104 Azure Administrator exam study. Syncs progress bidirectionally with a [web companion app](http://gitlab-docker.localdomain/khanh/azure-study-guide) over the home WiFi network.
+Native Android companion app for offline exam study with CertForge (multi-certification study platform, currently configured for AZ-104). Syncs progress bidirectionally with the CertForge web app over the home WiFi network.
 
 ## Features
 
-- **Domain & chapter browser** — Browse the AZ-104 exam domains and their chapters
+- **Domain & chapter browser** — Browse exam domains and their chapters
 - **Article viewer** — Full Microsoft Learn articles rendered in a WebView
 - **Study guides** — AI-generated study guides with markdown rendering (tables, code blocks, lists)
 - **Offline quiz engine** — Take domain-specific or comprehensive quizzes, scored locally
@@ -55,7 +55,7 @@ Web App (Next.js → SQLite/SQL.js)
 - JDK 17+
 - Android SDK 35
 - An emulator or physical device running API 26+
-- The [web companion app](http://gitlab-docker.localdomain/khanh/azure-study-guide) running and accessible on the same network
+- The CertForge web app running and accessible on the same network
 
 ## Building
 
@@ -70,12 +70,14 @@ Web App (Next.js → SQLite/SQL.js)
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The debug APK has the `.debug` suffix in the package name, allowing side-by-side installation with a release build.
+The debug APK has the `.debug` suffix in the package name (debug = `com.certforge.app.debug`), allowing side-by-side installation with a release build.
+
+> **Note:** The app was rebranded from "AZ-104 Study" to **CertForge**. The package was renamed from `com.az104.study` to `com.certforge.app`. If you had the old version installed, you'll need to re-pair — the app is treated as a new install.
 
 ## Project Structure
 
 ```
-app/src/main/java/com/az104/study/
+app/src/main/java/com/certforge/app/
 ├── data/
 │   ├── local/
 │   │   ├── dao/          # Room DAOs
@@ -109,7 +111,7 @@ app/src/main/java/com/az104/study/
 | Screen | Description |
 |--------|-------------|
 | Dashboard | Streak, progress overview, achievements, recent quizzes, quick actions |
-| Domains | List of AZ-104 exam domains |
+| Domains | List of exam domains |
 | Domain Chapters | Chapters within a domain with completion checkboxes |
 | Article Viewer | Full Microsoft Learn article in WebView |
 | Study Guide | AI-generated study guide with markdown rendering |
@@ -124,18 +126,19 @@ app/src/main/java/com/az104/study/
 
 ## API Endpoints
 
-The app communicates with the web app at the URL encoded in the pairing QR code. All endpoints require `Authorization: Bearer <apiToken>`.
+The app communicates with the web app at the URL encoded in the pairing QR code. All endpoints require `Authorization: Bearer <apiToken>`. Sync endpoints accept `?certId=` query param (defaults to `"az-104"`).
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
+| GET | `/api/certifications` | List available certifications |
 | POST | `/api/devices/pair` | Generate one-time setup token |
 | POST | `/api/devices/confirm` | Exchange token for permanent API token |
-| GET | `/api/sync/manifest` | Version hashes for all data types |
-| GET | `/api/sync/domains` | All domains + chapters |
-| GET | `/api/sync/questions[?since=]` | Practice questions |
-| GET | `/api/sync/study-guides[?since=]` | AI study guides |
-| GET | `/api/sync/articles` | Article metadata |
-| GET | `/api/articles/{articleId}` | Full article HTML content |
+| GET | `/api/sync/manifest[?certId=]` | Version hashes for all data types |
+| GET | `/api/sync/domains[?certId=]` | All domains + chapters |
+| GET | `/api/sync/questions[?since=&certId=]` | Practice questions |
+| GET | `/api/sync/study-guides[?since=&certId=]` | AI study guides |
+| GET | `/api/sync/articles[?certId=]` | Article metadata |
+| GET | `/api/articles/{articleId}[?certId=]` | Full article HTML content |
 | POST | `/api/sync/progress` | Upload quiz sessions + chapter progress |
 | GET | `/api/sync/progress?profileId=[&since=]` | Download progress |
 
