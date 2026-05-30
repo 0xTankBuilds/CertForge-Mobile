@@ -32,14 +32,23 @@ import com.certforge.app.ui.screens.dashboard.DashboardViewModel
 import com.certforge.app.ui.theme.CertForgeTheme
 import com.certforge.app.util.DarkModePreference
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import com.certforge.app.util.TokenManager
+import com.certforge.app.util.ServerUrlManager
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var tokenManager: TokenManager
+    @Inject lateinit var serverUrlManager: ServerUrlManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        if (java.io.File("/data/local/tmp/certforge_seed").exists()) {
+            seedData()
+        }
         setContent {
             val dashboardViewModel: DashboardViewModel = hiltViewModel()
             val darkMode by dashboardViewModel.darkMode.collectAsStateWithLifecycle()
@@ -110,5 +119,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun seedData() {
+        android.util.Log.d("CertForge", "Seeding test data")
+        tokenManager.saveApiToken("test-api-token-12345")
+        serverUrlManager.saveServerUrl("http://certforge.localdomain:3000")
+        serverUrlManager.saveProfileId("test-profile-456")
+        serverUrlManager.saveProfileName("TestUser")
+        serverUrlManager.setLastSyncTimestamp(System.currentTimeMillis())
+        java.io.File("/data/local/tmp/certforge_seed").delete()
     }
 }

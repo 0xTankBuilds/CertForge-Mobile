@@ -106,12 +106,22 @@ app/src/main/java/com/certforge/app/
 └── util/                 # Preferences, token management
 ```
 
-## Screens
+## Screenshots
+
+| Home | Study | Quiz |
+|------|-------|------|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Domains](docs/screenshots/study.png) | ![Quiz](docs/screenshots/quiz.png) |
+
+| Analytics | Settings |
+|-----------|----------|
+| ![Analytics](docs/screenshots/analytics.png) | ![Settings](docs/screenshots/settings.png) |
+
+### Screen Overview
 
 | Screen | Description |
 |--------|-------------|
 | Dashboard | Streak, progress overview, achievements, recent quizzes, quick actions |
-| Domains | List of exam domains |
+| Domains | List of exam domains with progress |
 | Domain Chapters | Chapters within a domain with completion checkboxes |
 | Article Viewer | Full Microsoft Learn article in WebView |
 | Study Guide | AI-generated study guide with markdown rendering |
